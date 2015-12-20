@@ -19,11 +19,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.RedditService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
     </application>
 
 </manifest>
