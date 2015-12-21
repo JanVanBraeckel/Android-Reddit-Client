@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_funny" android:title="Funny" />
-        <item android:id="@+id/nav_tifu" android:title="TIFU" />
-        <item android:id="@+id/nav_programmerhumor" android:title="ProgrammerHumor" />
-        <item android:id="@+id/nav_askreddit" android:title="Ask Reddit" />
-        <item android:id="@+id/nav_todayilearned" android:title="TIL" />
-        <item android:id="@+id/nav_wtf" android:title="WTF" />
+        <item android:id="@+id/nav_funny" android:title="@string/funny" />
+        <item android:id="@+id/nav_tifu" android:title="@string/tifu" />
+        <item android:id="@+id/nav_programmerhumor" android:title="@string/programmerHumor" />
+        <item android:id="@+id/nav_askreddit" android:title="@string/askReddit" />
+        <item android:id="@+id/nav_todayilearned" android:title="@string/til" />
+        <item android:id="@+id/nav_wtf" android:title="@string/wtf" />
     </group>
 
 </menu>

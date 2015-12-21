@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">RedditClient</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
+    <string name="funny">Funny</string>
+    <string name="tifu">TIFU</string>
+    <string name="programmerHumor">Programmer Humor</string>
+    <string name="askReddit">Ask Reddit</string>
+    <string name="til">TIL</string>
+    <string name="wtf">WTF</string>
+    <string name="redditClone">Totally not a Reddit clone</string>
 </resources>
