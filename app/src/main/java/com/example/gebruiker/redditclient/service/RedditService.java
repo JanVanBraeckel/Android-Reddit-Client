@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.gebruiker.redditclient.model.Batch;
 import com.example.gebruiker.redditclient.model.Post;
 
 import org.json.JSONObject;
@@ -24,6 +25,8 @@ public class RedditService {
     private static RedditService instance;
     private Context mContext;
     private final String BASEURL = "http://api.reddit.com";
+    private String previousSubreddit = "";
+    private String after="";
 
     public static RedditService getInstance(Context context) {
         if (instance == null) {
@@ -38,26 +41,43 @@ public class RedditService {
         mRequestQueue = Volley.newRequestQueue(mContext);
     }
 
-    public void getPosts(final VolleyCallback<List<Post>> callback, String subreddit) {
-        PostRequest postRequest = new PostRequest(Request.Method.GET, BASEURL + "/r/" + subreddit + ".json", new Response.Listener<List<Post>>() {
-            @Override
-            public void onResponse(List<Post> response) {
-                callback.onSuccess(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                callback.onError(error);
-            }
-        });
+    public void getPosts(final VolleyCallback<Batch> callback, String subreddit) {
+        callback.onStart();
 
+        if(subreddit != null && !subreddit.isEmpty())
+            previousSubreddit = subreddit;
+
+        PostRequest postRequest = new PostRequest(
+                Request.Method.GET,
+                BASEURL + "/r/" + (subreddit == null || subreddit.isEmpty() ? previousSubreddit : subreddit) + ".json",
+                (result) -> {
+                    after = result.getAfter();
+                    callback.onSuccess(result, false);
+                },
+                callback::onError
+        );
+
+        mRequestQueue.add(postRequest);
+    }
+
+    public void getNextPosts(final VolleyCallback<Batch> callback){
+        callback.onStart();
+        PostRequest postRequest = new PostRequest(
+                Request.Method.GET,
+                BASEURL + "/r/" + previousSubreddit + ".json" + (after != null && !after.isEmpty() ? "?after="+after:""),
+                (result) -> {
+                    after = result.getAfter();
+                    callback.onSuccess(result, true);
+                },
+                callback::onError
+        );
 
         mRequestQueue.add(postRequest);
     }
 
     public interface VolleyCallback<T> {
-        void onSuccess(T result);
-
+        void onStart();
+        void onSuccess(T result, boolean add);
         void onError(VolleyError error);
     }
 }

@@ -9,8 +9,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.gebruiker.redditclient.R;
+import com.example.gebruiker.redditclient.model.Batch;
 import com.example.gebruiker.redditclient.model.Post;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,52 +27,30 @@ import java.util.Map;
 /**
  * Created by Jan on 21/12/2015.
  */
-public class PostRequest extends Request<List<Post>> {
+public class PostRequest extends Request<Batch> {
+    private final Response.Listener<Batch> mListener;
+    private final Gson mGson = new GsonBuilder().registerTypeAdapter(Batch.class, new BatchDeserializer()).create();
 
-    private final List<Post> posts = new ArrayList<>();
-    private final Response.Listener<List<Post>> mListener;
-    private final Gson mGson = new Gson();
-
-    public PostRequest(int requestMethod, String url, Response.Listener<List<Post>> listener, Response.ErrorListener errorListener) {
+    public PostRequest(int requestMethod, String url, Response.Listener<Batch> listener, Response.ErrorListener errorListener) {
         super(requestMethod, url, errorListener);
         mListener = listener;
     }
 
     @Override
-    protected Response<List<Post>> parseNetworkResponse(NetworkResponse response) {
+    protected Response<Batch> parseNetworkResponse(NetworkResponse response) {
         try {
-            JSONObject jsonObject = new JSONObject(new String(response.data, HttpHeaderParser.parseCharset(response.headers)));
-            JSONArray array = jsonObject.getJSONObject("data").getJSONArray("children");
+            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            JSONArray filteredArray = new JSONArray();
+            Batch batch = mGson.fromJson(json, Batch.class);
 
-            for(int i = 0; i < array.length(); i++){
-                JSONObject row = array.getJSONObject(i).getJSONObject("data");
-                JSONObject filteredRow = new JSONObject();
-
-                filteredRow.put("title", row.getString("title"));
-                filteredRow.put("author", row.getString("author"));
-                if(row.has("preview")){
-                    filteredRow.put("imageUrl", row.getJSONObject("preview").getJSONArray("images").getJSONObject(0).getJSONObject("source").getString("url"));
-                }else{
-                    filteredRow.put("imageUrl", "");
-                }
-                filteredRow.put("permalink", row.getString("permalink"));
-                filteredRow.put("upvotes", row.getInt("ups"));
-                filteredRow.put("thumbnail", row.getString("thumbnail"));
-
-                filteredArray.put(filteredRow);
-            }
-
-            Post[] posts = mGson.fromJson(filteredArray.toString(), Post[].class);
-            return Response.success(Arrays.asList(posts), HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException | JSONException e) {
+            return Response.success(batch, HttpHeaderParser.parseCacheHeaders(response));
+        } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
     }
 
     @Override
-    protected void deliverResponse(List<Post> response) {
+    protected void deliverResponse(Batch response) {
         mListener.onResponse(response);
     }
 }

@@ -6,7 +6,8 @@
     <string name="tifu">TIFU</string>
     <string name="programmerHumor">Programmer Humor</string>
     <string name="askReddit">Ask Reddit</string>
-    <string name="til">TIL</string>
+    <string name="til">Today I Learned</string>
     <string name="wtf">WTF</string>
     <string name="redditClone">Totally not a Reddit clone</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>
