@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RedditClient.iml" filepath="$PROJECT_DIR$/RedditClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/batchdaogenerator/batchdaogenerator.iml" filepath="$PROJECT_DIR$/batchdaogenerator/batchdaogenerator.iml" />
     </modules>
   </component>
 </project>

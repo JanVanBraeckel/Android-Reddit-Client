@@ -1,5 +1,6 @@
 package com.example.gebruiker.redditclient;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import butterknife.Bind;
@@ -53,6 +55,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .commit();
 
         getSupportActionBar().setTitle(R.string.funny);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.nav_settings){
+            Intent intent = new Intent(this, RedditSettings.class);
+            startActivity(intent);
+        }
+
+        return true;
     }
 
     @Override

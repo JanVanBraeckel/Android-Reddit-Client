@@ -27,6 +27,8 @@ public class BatchDeserializer implements JsonDeserializer<Batch> {
 
         if (!jsonObject.get("after").isJsonNull())
             batch.setAfter(jsonObject.get("after").getAsString());
+        if (!jsonObject.get("before").isJsonNull())
+            batch.setBefore(jsonObject.get("before").getAsString());
 
         final List<Post> batchPosts = new ArrayList<>();
 
@@ -43,8 +45,11 @@ public class BatchDeserializer implements JsonDeserializer<Batch> {
             String permalink = data.get("permalink").getAsString();
             int upvotes = data.get("ups").getAsInt();
             String thumbnail = data.get("thumbnail").getAsString();
+            String subreddit = data.get("subreddit").getAsString().toLowerCase().replace(" ","");
 
-            batchPosts.add(new Post(title, imageUrl, author, permalink, thumbnail, upvotes));
+            batch.setSubreddit(subreddit);
+
+            batchPosts.add(new Post(title, imageUrl, author, permalink, thumbnail, upvotes, subreddit));
         }
 
         batch.setPosts(batchPosts);

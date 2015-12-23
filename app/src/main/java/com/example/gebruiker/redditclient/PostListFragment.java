@@ -3,6 +3,8 @@ package com.example.gebruiker.redditclient;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.android.volley.VolleyError;
 import com.example.gebruiker.redditclient.model.Batch;
 import com.example.gebruiker.redditclient.recyclerview.MainAdapter;
@@ -94,20 +97,28 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
+    public void onDestroy() {
+        mRedditService.destroyed();
+        super.onDestroy();
+    }
+
+    @Override
     public void onRefresh() {
-        mRedditService.getPosts(mCallback, null);
+        mScrollListener.reset();
+        mRecyclerView.setAdapter(null);
+        mRedditService.refreshPosts(mCallback);
     }
 
     public void loadPosts(MenuItem item) {
         mScrollListener.reset();
         mRecyclerView.setAdapter(null);
 
-        final String subreddit = item.getTitle().toString().replace(" ", "");
+        final String subreddit = item.getTitle().toString().toLowerCase().replace(" ", "");
         mRedditService.getPosts(mCallback, subreddit);
     }
 
     @OnClick(R.id.fab)
-    public void fabClicked(){
+    public void fabClicked() {
         mRecyclerView.smoothScrollToPosition(0);
     }
 }
