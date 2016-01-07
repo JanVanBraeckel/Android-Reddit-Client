@@ -3,7 +3,6 @@ package com.example.gebruiker.redditclient.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -66,8 +65,8 @@ public class RedditService implements SharedPreferences.OnSharedPreferenceChange
         if (subreddit != null && !subreddit.isEmpty()) {
             if (!subreddit.equals(previousSubreddit)) {
                 previousSubreddit = subreddit;
-                batchIds = new ArrayList<>();
             }
+            batchIds = new ArrayList<>();
         }
 
         Batch batch = getBatch(subreddit);
@@ -247,6 +246,7 @@ public class RedditService implements SharedPreferences.OnSharedPreferenceChange
             if (batch.getAfter() != null)
                 after = batch.getAfter();
 
+            //for some reason the lazy loading is being stupid, so I'm loading it in here to be sure
             batch.getPosts();
             return batch;
         }

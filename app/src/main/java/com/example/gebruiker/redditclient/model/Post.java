@@ -1,5 +1,8 @@
 package com.example.gebruiker.redditclient.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.gebruiker.redditclient.model.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -11,7 +14,7 @@ import de.greenrobot.dao.AbstractDao;
 /**
  * Entity mapped to table "POST".
  */
-public class Post {
+public class Post implements Parcelable{
 
     private Long id;
     private String title;
@@ -193,6 +196,42 @@ public class Post {
         this.upvotes = upvotes;
         this.subreddit = subreddit;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(imageUrl);
+        dest.writeString(author);
+        dest.writeString(permalink);
+        dest.writeString(thumbnail);
+        dest.writeString(subreddit);
+    }
+
+    protected Post(Parcel in) {
+        title = in.readString();
+        imageUrl = in.readString();
+        author = in.readString();
+        permalink = in.readString();
+        thumbnail = in.readString();
+        subreddit = in.readString();
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
     // KEEP METHODS END
 
 }

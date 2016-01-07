@@ -23,15 +23,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     private Context mContext;
     private List<Post> mPosts;
+    private PostClickedListener mListener;
+
 
     public class MainViewHolder extends RecyclerView.ViewHolder {
         private final ImageView mImage;
         private final TextView mTitle;
+        private final TextView mUpvotes;
 
         public MainViewHolder(View itemView) {
             super(itemView);
             mImage = ButterKnife.findById(itemView, R.id.postImage);
             mTitle = ButterKnife.findById(itemView, R.id.postTitle);
+            mUpvotes = ButterKnife.findById(itemView, R.id.postUpvotesNumber);
         }
     }
 
@@ -50,11 +54,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         final Post post = mPosts.get(position);
 
         holder.mTitle.setText(post.getTitle());
+
         Glide.with(mContext)
                 .load(post.getThumbnail())
                 .placeholder(R.drawable.reddit)
                 .fitCenter()
                 .into(holder.mImage);
+
+        holder.mUpvotes.setText(post.getUpvotes().toString());
+
+        holder.itemView.setOnClickListener(v -> {
+            mListener.postClicked(post);
+        });
     }
 
     @Override
@@ -66,4 +77,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         mPosts.addAll(posts);
         notifyDataSetChanged();
     }
+
+    public interface PostClickedListener{
+        void postClicked(Post post);
+    }
+
+    public void setCardClickedListener(PostClickedListener listener){
+        mListener = listener;
+    }
+
 }

@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import com.android.volley.VolleyError;
 import com.example.gebruiker.redditclient.model.Batch;
+import com.example.gebruiker.redditclient.model.Post;
+import com.example.gebruiker.redditclient.recyclerview.ItemDecorator;
 import com.example.gebruiker.redditclient.recyclerview.MainAdapter;
 import com.example.gebruiker.redditclient.recyclerview.ScrollListener;
 import com.example.gebruiker.redditclient.service.RedditService;
@@ -64,6 +66,7 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
         };
 
         mRecyclerView.addOnScrollListener(mScrollListener);
+        mRecyclerView.addItemDecoration(new ItemDecorator(getContext()));
 
         mCallback = new RedditService.VolleyCallback<Batch>() {
             @Override
@@ -78,6 +81,7 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
                     ((MainAdapter) mRecyclerView.getAdapter()).addItems(result.getPosts());
                 } else {
                     MainAdapter adapter = new MainAdapter(result.getPosts(), getContext());
+                    adapter.setCardClickedListener((MainAdapter.PostClickedListener) getActivity());
                     mRecyclerView.setAdapter(adapter);
                 }
             }
@@ -93,12 +97,14 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
+
         return v;
     }
 
     @Override
     public void onDestroy() {
-        mRedditService.destroyed();
+        if (mRedditService != null)
+            mRedditService.destroyed();
         super.onDestroy();
     }
 
@@ -109,11 +115,12 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
         mRedditService.refreshPosts(mCallback);
     }
 
-    public void loadPosts(MenuItem item) {
+    public void loadPosts(String item) {
+        final String subreddit = item.toLowerCase().replace(" ", "");
+
         mScrollListener.reset();
         mRecyclerView.setAdapter(null);
 
-        final String subreddit = item.getTitle().toString().toLowerCase().replace(" ", "");
         mRedditService.getPosts(mCallback, subreddit);
     }
 
