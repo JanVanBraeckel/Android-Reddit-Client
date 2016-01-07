@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RedditClient.iml" filepath="$PROJECT_DIR$/RedditClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Redditclient.iml" filepath="$PROJECT_DIR$/Redditclient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/batchdaogenerator/batchdaogenerator.iml" filepath="$PROJECT_DIR$/batchdaogenerator/batchdaogenerator.iml" />
     </modules>

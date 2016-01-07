@@ -1,14 +1,17 @@
 package com.example.gebruiker.redditclient.service;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.example.gebruiker.redditclient.R;
 import com.example.gebruiker.redditclient.model.Batch;
 import com.example.gebruiker.redditclient.model.BatchDao;
 import com.example.gebruiker.redditclient.model.DaoMaster;
@@ -22,7 +25,7 @@ import java.util.List;
 /**
  * Created by Jan on 21/12/2015.
  */
-public class RedditService {
+public class RedditService implements SharedPreferences.OnSharedPreferenceChangeListener{
     private final String TAG = "RedditService";
 
     private RequestQueue mRequestQueue;
@@ -34,6 +37,7 @@ public class RedditService {
     private String after = "";
     private BatchDao mBatchDao;
     private PostDao mPostDao;
+    private int postsPerBatch;
 
     public static RedditService getInstance(Context context) {
         if (instance == null) {
@@ -46,6 +50,13 @@ public class RedditService {
     private RedditService(Context context) {
         mContext = context;
         mRequestQueue = Volley.newRequestQueue(mContext);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        postsPerBatch = Integer.parseInt(sharedPreferences.getString(mContext.getString(R.string.batch_size), "25"));
+
+        Log.e(TAG, "RedditService() postsBerBatch: " +  postsPerBatch);
+
         initDatabase();
     }
 
@@ -68,14 +79,18 @@ public class RedditService {
             Log.e(TAG, "GETPOSTS NO NETWORK CALL");
         } else {
             Log.e(TAG, "GETPOSTS NETWORK CALL");
+            Log.e(TAG, "Get " + postsPerBatch + " posts");
+            String req = BASEURL + "/r/" + (subreddit == null || subreddit.isEmpty() ? previousSubreddit : subreddit) + ".json?limit=" + postsPerBatch;
+            Log.e("Request", req);
             PostRequest postRequest = new PostRequest(
                     Request.Method.GET,
-                    BASEURL + "/r/" + (subreddit == null || subreddit.isEmpty() ? previousSubreddit : subreddit) + ".json?count=25",
+                    BASEURL + "/r/" + (subreddit == null || subreddit.isEmpty() ? previousSubreddit : subreddit) + ".json?limit=" + postsPerBatch,
                     (result) -> {
                         after = result.getAfter();
                         mBatchDao.insert(result);
                         batchIds.add(result.getId());
                         List<Post> posts = result.getPosts();
+                        Log.e(TAG, "getPosts() returned: " + posts.size() + " posts");
                         for (Post post : posts) {
                             post.setBatchId(result.getId());
                             mPostDao.insertOrReplace(post);
@@ -101,14 +116,16 @@ public class RedditService {
             Log.e(TAG, "GETNEXTPOSTS NO NETWORK CALL");
         } else {
             Log.e(TAG, "GETNEXTPOSTS NETWORK CALL");
+            Log.e(TAG, "Get " + postsPerBatch + " posts");
             PostRequest postRequest = new PostRequest(
                     Request.Method.GET,
-                    BASEURL + "/r/" + previousSubreddit + ".json?count=25" + (after != null && !after.isEmpty() ? "&after=" + after : ""),
+                    BASEURL + "/r/" + previousSubreddit + ".json?limit=" + postsPerBatch + (after != null && !after.isEmpty() ? "&after=" + after : ""),
                     (result) -> {
                         after = result.getAfter();
                         mBatchDao.insert(result);
                         batchIds.add(result.getId());
                         List<Post> posts = result.getPosts();
+                        Log.e(TAG, "getPosts() returned: " + posts.size() + " posts");
                         for (Post post : posts) {
                             post.setBatchId(result.getId());
                             mPostDao.insertOrReplace(post);
@@ -137,14 +154,16 @@ public class RedditService {
                 .buildDelete()
                 .executeDeleteWithoutDetachingEntities();
 
+        Log.e(TAG, "Get " + postsPerBatch + " posts");
         PostRequest postRequest = new PostRequest(
                 Request.Method.GET,
-                BASEURL + "/r/" + previousSubreddit + ".json?count=25",
+                BASEURL + "/r/" + previousSubreddit + ".json?limit=" + postsPerBatch,
                 (result) -> {
                     after = result.getAfter();
                     mBatchDao.insert(result);
                     batchIds.add(result.getId());
                     List<Post> posts = result.getPosts();
+                    Log.e(TAG, "getPosts() returned: " + posts.size() + " posts");
                     for (Post post : posts) {
                         post.setBatchId(result.getId());
                         mPostDao.insertOrReplace(post);
@@ -169,6 +188,14 @@ public class RedditService {
 
     public void destroyed() {
         batchIds = new ArrayList<>();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(mContext.getString(R.string.batch_size)))
+            postsPerBatch = Integer.parseInt(sharedPreferences.getString(key, "25"));
+
+        Log.e(TAG, "onSharedPreferenceChanged() returned: " + postsPerBatch);
     }
 
     public interface VolleyCallback<T> {
