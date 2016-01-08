@@ -1,8 +1,5 @@
 package com.example.gebruiker.redditclient.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.example.gebruiker.redditclient.model.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -10,11 +7,13 @@ import de.greenrobot.dao.DaoException;
 
 // KEEP INCLUDES - put your custom includes here
 import de.greenrobot.dao.AbstractDao;
+import android.os.Parcel;
+import android.os.Parcelable;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table "POST".
  */
-public class Post implements Parcelable{
+public class Post implements Parcelable {
 
     private Long id;
     private String title;
@@ -24,6 +23,8 @@ public class Post implements Parcelable{
     private String thumbnail;
     private Integer upvotes;
     private String subreddit;
+    private String url;
+    private String selftext;
     private Long batchId;
 
     /** Used to resolve relations */
@@ -46,7 +47,7 @@ public class Post implements Parcelable{
         this.id = id;
     }
 
-    public Post(Long id, String title, String imageUrl, String author, String permalink, String thumbnail, Integer upvotes, String subreddit, Long batchId) {
+    public Post(Long id, String title, String imageUrl, String author, String permalink, String thumbnail, Integer upvotes, String subreddit, String url, String selftext, Long batchId) {
         this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
@@ -55,6 +56,8 @@ public class Post implements Parcelable{
         this.thumbnail = thumbnail;
         this.upvotes = upvotes;
         this.subreddit = subreddit;
+        this.url = url;
+        this.selftext = selftext;
         this.batchId = batchId;
     }
 
@@ -128,6 +131,22 @@ public class Post implements Parcelable{
         this.subreddit = subreddit;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getSelftext() {
+        return selftext;
+    }
+
+    public void setSelftext(String selftext) {
+        this.selftext = selftext;
+    }
+
     public Long getBatchId() {
         return batchId;
     }
@@ -187,7 +206,7 @@ public class Post implements Parcelable{
 
     // KEEP METHODS - put your custom methods here
 
-    public Post(String title, String imageUrl, String author, String permalink, String thumbnail, int upvotes, String subreddit) {
+    public Post(String title, String imageUrl, String author, String permalink, String thumbnail, int upvotes, String subreddit, String url, String selftext) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.author = author;
@@ -195,6 +214,8 @@ public class Post implements Parcelable{
         this.thumbnail = thumbnail;
         this.upvotes = upvotes;
         this.subreddit = subreddit;
+        this.url = url;
+        this.selftext = selftext;
     }
 
     @Override
@@ -221,7 +242,7 @@ public class Post implements Parcelable{
         subreddit = in.readString();
     }
 
-    public static final Creator<Post> CREATOR = new Creator<Post>() {
+    public static final Parcelable.Creator<Post> CREATOR = new Parcelable.Creator<Post>() {
         @Override
         public Post createFromParcel(Parcel in) {
             return new Post(in);

@@ -36,7 +36,9 @@ public class PostDao extends AbstractDao<Post, Long> {
         public final static Property Thumbnail = new Property(5, String.class, "thumbnail", false, "THUMBNAIL");
         public final static Property Upvotes = new Property(6, Integer.class, "upvotes", false, "UPVOTES");
         public final static Property Subreddit = new Property(7, String.class, "subreddit", false, "SUBREDDIT");
-        public final static Property BatchId = new Property(8, Long.class, "batchId", false, "BATCH_ID");
+        public final static Property Url = new Property(8, String.class, "url", false, "URL");
+        public final static Property Selftext = new Property(9, String.class, "selftext", false, "SELFTEXT");
+        public final static Property BatchId = new Property(10, Long.class, "batchId", false, "BATCH_ID");
     };
 
     private DaoSession daoSession;
@@ -64,7 +66,9 @@ public class PostDao extends AbstractDao<Post, Long> {
                 "\"THUMBNAIL\" TEXT," + // 5: thumbnail
                 "\"UPVOTES\" INTEGER," + // 6: upvotes
                 "\"SUBREDDIT\" TEXT," + // 7: subreddit
-                "\"BATCH_ID\" INTEGER);"); // 8: batchId
+                "\"URL\" TEXT," + // 8: url
+                "\"SELFTEXT\" TEXT," + // 9: selftext
+                "\"BATCH_ID\" INTEGER);"); // 10: batchId
     }
 
     /** Drops the underlying database table. */
@@ -118,9 +122,19 @@ public class PostDao extends AbstractDao<Post, Long> {
             stmt.bindString(8, subreddit);
         }
  
+        String url = entity.getUrl();
+        if (url != null) {
+            stmt.bindString(9, url);
+        }
+ 
+        String selftext = entity.getSelftext();
+        if (selftext != null) {
+            stmt.bindString(10, selftext);
+        }
+ 
         Long batchId = entity.getBatchId();
         if (batchId != null) {
-            stmt.bindLong(9, batchId);
+            stmt.bindLong(11, batchId);
         }
     }
 
@@ -148,7 +162,9 @@ public class PostDao extends AbstractDao<Post, Long> {
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // thumbnail
             cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // upvotes
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // subreddit
-            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8) // batchId
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // url
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // selftext
+            cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10) // batchId
         );
         return entity;
     }
@@ -164,7 +180,9 @@ public class PostDao extends AbstractDao<Post, Long> {
         entity.setThumbnail(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setUpvotes(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
         entity.setSubreddit(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
-        entity.setBatchId(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
+        entity.setUrl(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setSelftext(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setBatchId(cursor.isNull(offset + 10) ? null : cursor.getLong(offset + 10));
      }
     
     /** @inheritdoc */

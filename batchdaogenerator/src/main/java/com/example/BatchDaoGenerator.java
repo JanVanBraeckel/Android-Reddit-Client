@@ -26,6 +26,10 @@ public class BatchDaoGenerator {
         post.addStringProperty("thumbnail");
         post.addIntProperty("upvotes");
         post.addStringProperty("subreddit");
+        post.addStringProperty("url");
+        post.addStringProperty("selftext");
+
+        post.implementsInterface("Parcelable");
 
         Property batchId = post.addLongProperty("batchId").getProperty();
         post.addToOne(batch, batchId);

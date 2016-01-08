@@ -1,6 +1,5 @@
 package com.example.gebruiker.redditclient.model;
 
-import java.util.Comparator;
 import java.util.List;
 import com.example.gebruiker.redditclient.model.DaoSession;
 import de.greenrobot.dao.DaoException;
@@ -134,7 +133,6 @@ public class Batch {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
-
     // KEEP METHODS END
 
 }

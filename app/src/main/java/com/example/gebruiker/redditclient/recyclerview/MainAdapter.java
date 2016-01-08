@@ -1,6 +1,8 @@
 package com.example.gebruiker.redditclient.recyclerview;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,9 +65,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
         holder.mUpvotes.setText(post.getUpvotes().toString());
 
-        holder.itemView.setOnClickListener(v -> {
-            mListener.postClicked(post);
-        });
+        holder.itemView.setOnClickListener(v -> mListener.postClicked(post));
+
+        if(post.getUrl() != null && !post.getUrl().isEmpty()){
+            holder.mImage.setOnClickListener(v->{
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(post.getUrl()));
+                mContext.startActivity(browserIntent);
+            });
+        }
     }
 
     @Override

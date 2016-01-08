@@ -1,5 +1,6 @@
 package com.example.gebruiker.redditclient.service;
 
+import com.example.gebruiker.redditclient.R;
 import com.example.gebruiker.redditclient.model.Batch;
 import com.example.gebruiker.redditclient.model.Post;
 import com.google.gson.JsonArray;
@@ -41,15 +42,19 @@ public class BatchDeserializer implements JsonDeserializer<Batch> {
             String author = data.get("author").getAsString();
             String imageUrl = "";
             if (data.has("preview"))
-                data.getAsJsonObject("preview").getAsJsonArray("images").get(0).getAsJsonObject().getAsJsonObject("source").get("url").getAsString();
+                imageUrl = data.getAsJsonObject("preview").getAsJsonArray("images").get(0).getAsJsonObject().getAsJsonObject("source").get("url").getAsString();
             String permalink = data.get("permalink").getAsString();
             int upvotes = data.get("ups").getAsInt();
             String thumbnail = data.get("thumbnail").getAsString();
-            String subreddit = data.get("subreddit").getAsString().toLowerCase().replace(" ","");
-
+            String subreddit = data.get("subreddit").getAsString().toLowerCase().replace(" ", "");
+            String url = data.get("url").getAsString();
+            String selftext = "";
+            if(data.has("selftext") && !data.get("selftext").isJsonNull()){
+                selftext = data.get("selftext").getAsString();
+            }
             batch.setSubreddit(subreddit);
 
-            batchPosts.add(new Post(title, imageUrl, author, permalink, thumbnail, upvotes, subreddit));
+            batchPosts.add(new Post(title, imageUrl, author, permalink, thumbnail, upvotes, subreddit, url, selftext));
         }
 
         batch.setPosts(batchPosts);

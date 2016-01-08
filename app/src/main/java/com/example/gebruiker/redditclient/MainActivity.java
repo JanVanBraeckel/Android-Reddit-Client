@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFragmentManager.beginTransaction().replace(R.id.container, mPostListFragment, "list").commit();
 
         getSupportActionBar().setTitle(currentSubreddit);
+
     }
 
     private void configureWithBackstack() {
@@ -85,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (mFragmentManager == null)
                 mFragmentManager = getSupportFragmentManager();
             mFragmentManager.popBackStack();
-            getSupportActionBar().setTitle(currentSubreddit);
         });
     }
 
@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mToggle.setDrawerIndicatorEnabled(true);
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getSupportActionBar().setTitle(currentSubreddit);
+        mPostListFragment.loadPosts(currentSubreddit);
     }
 
     @Override
