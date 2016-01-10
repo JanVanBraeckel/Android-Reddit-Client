@@ -3,6 +3,7 @@ package com.example.gebruiker.redditclient;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -52,6 +53,8 @@ public class PostDetailFragment extends Fragment {
             post = bundle.getParcelable("post");
             loadDetails();
         }
+
+        ((AppCompatActivity )getActivity()).getSupportActionBar().setTitle(post.getTitle());
 
         return v;
     }

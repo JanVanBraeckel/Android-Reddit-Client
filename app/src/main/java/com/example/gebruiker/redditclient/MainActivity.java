@@ -70,12 +70,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        mPostListFragment = new PostListFragment();
 
-        mFragmentManager.beginTransaction().replace(R.id.container, mPostListFragment, "list").commit();
+        if (mFragmentManager.findFragmentByTag("list") == null) {
+            mPostListFragment = new PostListFragment();
+            mFragmentManager.beginTransaction().replace(R.id.container, mPostListFragment, "list").commit();
+        } else {
+            mPostListFragment = (PostListFragment) mFragmentManager.findFragmentByTag("list");
+        }
+
+        if(mFragmentManager.findFragmentByTag("detail") != null){
+            configureWithBackstack();
+        }
+
+        if (savedInstanceState != null && savedInstanceState.containsKey("currentSubreddit"))
+            currentSubreddit = savedInstanceState.getString("currentSubreddit");
+
 
         getSupportActionBar().setTitle(currentSubreddit);
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("currentSubreddit", currentSubreddit);
+        super.onSaveInstanceState(outState);
     }
 
     private void configureWithBackstack() {
@@ -102,11 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main_menu, menu);
         return true;
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        return super.onSupportNavigateUp();
     }
 
     @Override

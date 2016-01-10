@@ -46,9 +46,10 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private ScrollListener mScrollListener;
 
+    private String currentSubreddit = "funny";
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_post_list, container, false);
 
         ButterKnife.bind(this, v);
@@ -93,12 +94,20 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         };
 
-        mRedditService.getPosts(mCallback, "funny");
+        if(savedInstanceState != null && savedInstanceState.containsKey("currentSubreddit"))
+            currentSubreddit = savedInstanceState.getString("currentSubreddit");
+
+        mRedditService.getPosts(mCallback, currentSubreddit);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("currentSubreddit", currentSubreddit);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -118,10 +127,14 @@ public class PostListFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void loadPosts(String item) {
         final String subreddit = item.toLowerCase().replace(" ", "");
 
-        mScrollListener.reset();
-        mRecyclerView.setAdapter(null);
+        if (mScrollListener != null)
+            mScrollListener.reset();
+        if (mRecyclerView != null)
+            mRecyclerView.setAdapter(null);
 
-        mRedditService.getPosts(mCallback, subreddit);
+        currentSubreddit = subreddit;
+
+        mRedditService.getPosts(mCallback, currentSubreddit);
     }
 
     @OnClick(R.id.fab)
